@@ -7,7 +7,7 @@ typedef struct i2c_msg {
 	unsigned int addr;
 	unsigned int flag;
 	unsigned int len;
-	unsigned int con_transferred;
+	unsigned int cnt_transferred;
 	unsigned char *buf;
 }i2c_msg, *p_i2c_msg;
 
