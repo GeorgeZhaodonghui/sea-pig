@@ -14,7 +14,7 @@ objs += ts/touchscreen.o
 objs += ts/adc.o
 objs += ts/tslib.o
 
-objs += i2c/at24cxx.o
+objs += i2c/at24c02.o
 objs += i2c/i2c_controller.o
 objs += i2c/i2c_test.o
 objs += i2c/s3c2440_i2c_controller.o

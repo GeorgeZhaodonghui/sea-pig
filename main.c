@@ -33,7 +33,7 @@ int main(void)
 
 	//ts_test();
 	i2c_test();
-	while (1);
+	//while (1);
 
 	//nor_main();
 	//nand_main();

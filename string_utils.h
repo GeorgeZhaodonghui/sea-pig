@@ -12,6 +12,5 @@ unsigned int get_uint(void);
 int strlen(const char * s);
 int strcmp(const char * cs, const char * ct);
 
-
 #endif /* _STRING_UTILS_H */
 
