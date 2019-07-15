@@ -71,7 +71,7 @@ static int s3c2440_i2c_init(void)
 	GPECON |= (0x2 << 30) | (0x2 << 28);
 	
 	IICCON = (0x1 << 7) | (0x1 << 6) | (0x1 << 5) |
-				(0x0 << 4) | (0x0 << 0);
+				(0x0 << 4) | (0x1 << 0);
 
 	return 0;
 }
