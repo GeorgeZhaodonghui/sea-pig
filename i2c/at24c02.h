@@ -3,6 +3,8 @@
 
 int at24c02_write(unsigned char address, unsigned char *data, unsigned int len);
 int at24c02_read(unsigned char address, unsigned char *data, unsigned int len);
+//int at24c02_write(unsigned int addr, unsigned char *data, int len);
+//int at24c02_read(unsigned int addr, unsigned char *data, int len);
 
 #endif
 

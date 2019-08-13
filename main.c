@@ -25,7 +25,7 @@ int main(void)
 
 	leds_init();
 	key_gpio_init();
-	timer_init();
+	//timer_init();
 
 	puts("\n\r");
 	put_hex(g_a);

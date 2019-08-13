@@ -3,51 +3,86 @@
 
 static p_i2c_msg p_cur_msg;
 
-static int s3c2440_i2c_interrupt_handle_tx(void)
+static int is_thelast_data(void)
+{
+	if (p_cur_msg->cnt_transferred == p_cur_msg->len - 1)
+		return 1;
+	else
+		return 0;
+}
+
+static void resume_i2c_with_ack(void)
+{
+	IICCON = (0x1 << 7) | (0x1 << 6) | (0x1 << 5) |
+				(0x0 << 4) | (0x1 << 0);
+}
+
+static void resume_i2c_without_ack(void)
+{
+	IICCON = (0x1 << 6) | (0x1 << 5) | (0x0 << 4) | (0x1 << 0);
+}
+
+static void s3c2440_i2c_interrupt_handle_tx(void)
 {
 	unsigned char iicstat;
 
 	iicstat = IICSTAT;
 	p_cur_msg->cnt_transferred++;
 
-	if (iicstat & 0x1) {
-		IICSTAT = 0xD0;
-		IICCON  = ~(0x1 << 4);
-		p_cur_msg->err = -1;
-		return -1;
+	if (p_cur_msg->cnt_transferred == 0) {
+		if (iicstat & 0x1) {
+			IICSTAT = 0xD0;
+			IICCON  = ~(0x1 << 4);
+			p_cur_msg->err = -1;
+			printf("tx no ack, iicstat = 0x%x\n\r", iicstat);
+			return ;
+		}
 	}
 
-	if (p_cur_msg->len > (p_cur_msg->cnt_transferred -1)) {
-		IICDS = p_cur_msg->buf[p_cur_msg->cnt_transferred - 1];
-		IICCON  = ~(0x1 << 4);
+	if (p_cur_msg->len > p_cur_msg->cnt_transferred) {
+		IICDS = p_cur_msg->buf[p_cur_msg->cnt_transferred];
+		IICCON  &= ~(0x1 << 4);
 	} else {
 		IICSTAT = 0xD0;
-		IICCON  = ~(0x1 << 4);
+		IICCON &= ~(0x1 << 4);
+		delay(1000);
 	}
 
-	return 0;
+	return ;
 }
+
 
 static int s3c2440_i2c_interrupt_handle_rx(void)
 {
 	unsigned char iicstat;
+	int	index;
 
 	iicstat = IICSTAT;
 	p_cur_msg->cnt_transferred++;
 
-	if (iicstat & 0x1) {
-		IICSTAT = 0xB0;
-		IICCON  = ~(0x1 << 4);
-		p_cur_msg->err = -1;
-		return -1;
+	if (p_cur_msg->cnt_transferred == 0) {
+		if (iicstat & 0x1) {
+			IICSTAT = 0xB0;
+			IICCON  = ~(0x1 << 4);
+			p_cur_msg->err = -1;
+			printf("rx no ack, iicstat = 0x%x\n\r", iicstat);
+			return -1;
+		}
 	}
 
-	if (p_cur_msg->len > (p_cur_msg->cnt_transferred -1)) {
-		p_cur_msg->buf[p_cur_msg->cnt_transferred - 1] = IICDS;
-		IICCON  = ~(0x1 << 4);
+	if (p_cur_msg->len > p_cur_msg->cnt_transferred) {
+		index = p_cur_msg->cnt_transferred - 1;
+		p_cur_msg->buf[index] = IICDS;
+		IICCON  &= ~(0x1 << 4);
+		if (is_thelast_data()) {
+			resume_i2c_without_ack();
+		} else {
+			resume_i2c_with_ack();
+		}
 	} else {
 		IICSTAT = 0x90;
-		IICCON  = ~(0x1 << 4);
+		IICCON  &= ~(0x1 << 4);
+		delay(1000);
 	}
 
 	return 0;
@@ -66,12 +101,12 @@ static void s3c2440_i2c_interrupt_handle(int irq)
 
 static int s3c2440_i2c_init(void)
 {
-	/* IICSCL GPE14   IICSDA GPE15 */
+	// IICSCL GPE14   IICSDA GPE15
 	GPECON &= ~((0x3 << 30) | (0x3 << 28));
 	GPECON |= (0x2 << 30) | (0x2 << 28);
 	
 	IICCON = (0x1 << 7) | (0x1 << 6) | (0x1 << 5) |
-				(0x0 << 4) | (0x0 << 0);
+				(0x0 << 4) | (0x1 << 0);
 
 	return 0;
 }
@@ -80,14 +115,15 @@ static int s3c2440_i2c_transfer_tx(p_i2c_msg p_msgs)
 {
 	p_cur_msg = p_msgs;
 	
-	p_msgs->cnt_transferred = 0;
+	p_msgs->cnt_transferred = -1;
 	p_msgs->err = 0;
 
+	IICCON |= (0x1 << 7);
 	IICSTAT = (0x3 << 6) | (0x0 << 5) | (0x1 << 4);
 	IICDS   = (p_msgs->addr << 1) | 0x0;
 	IICSTAT = 0xF0;
 
-	while (!p_cur_msg->err && (p_cur_msg->len != (p_cur_msg->cnt_transferred - 1)));
+	while (!p_cur_msg->err && (p_cur_msg->len != p_cur_msg->cnt_transferred));
 
 	if (p_cur_msg->err)
 		return -1;
@@ -99,9 +135,10 @@ static int s3c2440_i2c_transfer_rx(p_i2c_msg p_msgs)
 {
 	p_cur_msg = p_msgs;
 	
-	p_msgs->cnt_transferred = 0;
+	p_msgs->cnt_transferred = -1;
 	p_msgs->err = 0;
-	
+
+	IICCON |= (0x1 << 7);
 	IICSTAT = (0x2 << 6) | (0x0 << 5) | (0x1 << 4);
 	IICDS   = (p_msgs->addr << 1) | 0x1;
 	IICSTAT = 0xB0;
@@ -119,7 +156,7 @@ static int s3c2440_i2c_transfer(p_i2c_msg p_msgs, int num)
 	int cnt;
 	int err;
 
-	for (cnt = 0; cnt < num; cnt++) {	
+	for (cnt = 0; cnt < num; cnt++) {
 		if (p_msgs->flag== 0) {
 			err = s3c2440_i2c_transfer_tx(p_msgs);
 		} else if (p_msgs->flag== 1){
@@ -130,6 +167,7 @@ static int s3c2440_i2c_transfer(p_i2c_msg p_msgs, int num)
 		if (err < 0)
 			return -1;
 	}
+	
 	return 0;
 }
 

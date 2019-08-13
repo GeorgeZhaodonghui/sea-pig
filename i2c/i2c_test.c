@@ -2,6 +2,7 @@
 #include "at24c02.h"
 #include "../string_utils.h"
 #include "../my_printf.h"
+#include "../leds.h"
 
 static void at24c02_menu(void)
 {
@@ -35,13 +36,13 @@ static void do_at24c02_read(void)
 	unsigned char *paddr;
 	unsigned int address;
 	unsigned int i, j;
-	unsigned char buf[16];
+	unsigned char buf[17];
 
 	printf("Enter the address of at24c02 to read: ");
 	address = get_uint();
 
 	for (i = 0; i < 4; i++) {
-		at24c02_read((unsigned char)address, buf, 16);
+		at24c02_read(address, buf, 17);
 		for (j = 0; j < 16; j++) {
 			printf("%02x  ", buf[j]);
 		}
@@ -53,6 +54,7 @@ static void do_at24c02_read(void)
 				printf("%c ", buf[j]);
 		}
 		printf("\n\r");
+		address += 16;
 	}
 }
 
