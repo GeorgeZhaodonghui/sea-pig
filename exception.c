@@ -32,7 +32,7 @@ static void interrupt_controller_init(int irq)
 
 	/* interrput pending register */
 	//INTPND  |= ((1 << 0) | (1 << 2) | (1 << 5));
-	printf("init irq = %d\n\r", irq);
+	//printf("init irq = %d\n\r", irq);
 
 	/* INTOFFSET */
 }

@@ -19,13 +19,19 @@ objs += i2c/i2c_controller.o
 objs += i2c/i2c_test.o
 objs += i2c/s3c2440_i2c_controller.o
 
+objs += spi/gpio_spi.o
+objs += spi/oled.o
+objs += spi/spi_flash.o
+objs += spi/vsprintf.o
+objs += spi/div64.o
+
 all: $(objs)
-	arm-linux-ld -T linker.lds $^ libgcc.a -o i2c.elf
-	arm-linux-objcopy -O binary -S i2c.elf i2c.bin
-	arm-linux-objdump -D i2c.elf > i2c.dis
+	arm-linux-ld -T linker.lds $^ libgcc.a -o spi.elf
+	arm-linux-objcopy -O binary -S spi.elf spi.bin
+	arm-linux-objdump -D spi.elf > spi.dis
 
 clean:
-	rm *.bin *.o *.elf *.dis lcd/*.o ts/*.o i2c/*.o
+	rm *.bin *.o *.elf *.dis lcd/*.o ts/*.o i2c/*.o spi/*.o
 
 .PHONY:	clean
 

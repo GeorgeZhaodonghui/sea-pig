@@ -9,6 +9,8 @@
 #include "lcd/font.h"
 #include "lcd/lcd.h"
 #include "ts/ts_test.h"
+#include "spi/gpio_spi.h"
+#include "spi/oled.h"
 
 char	g_char = 'A';
 char g_char2 = 'a';
@@ -22,6 +24,9 @@ int main(void)
 	double voltage;
 	unsigned int m;
 	unsigned int n;*/
+	unsigned char pid;
+	unsigned char vid;
+	char str[100];
 
 	leds_init();
 	key_gpio_init();
@@ -30,6 +35,15 @@ int main(void)
 	puts("\n\r");
 	put_hex(g_a);
 	puts("\n\r");
+
+	spi_init();
+	oled_init();
+	oled_printf(0, 0, "Shihaiyun is my girl");
+
+	spi_flash_read_id(&pid, &vid);
+	printf("spi flash pid = 0x%x, vid = 0x%x\n\r", pid, vid);
+	sprintf(str, "spi flash pid = %x, vid = %x", pid, vid);
+	oled_printf(4, 0, str);
 
 	//ts_test();
 	i2c_test();

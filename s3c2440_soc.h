@@ -1,9 +1,3 @@
-/*
-制  作:www.100ask.org深圳百问网科技有限公司
-工程师：韦东山
-当前版本：v1.0
-*/
-
 #ifndef  __S3C2440_SOC_H
 #define  __S3C2440_SOC_H
 
