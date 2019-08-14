@@ -19,7 +19,7 @@ objs += i2c/i2c_controller.o
 objs += i2c/i2c_test.o
 objs += i2c/s3c2440_i2c_controller.o
 
-objs += spi/gpio_spi.o
+objs += spi/s3c2440_spi.o
 objs += spi/oled.o
 objs += spi/spi_flash.o
 objs += spi/vsprintf.o

@@ -20,13 +20,15 @@ int	g_b;
 
 int main(void)
 {
-	/*unsigned int adc;
+	unsigned int adc;
 	double voltage;
 	unsigned int m;
-	unsigned int n;*/
+	unsigned int n;
 	unsigned char pid;
 	unsigned char vid;
-	char str[100];
+	char str1[100];
+	char str2[100];
+	char str3[100];
 
 	leds_init();
 	key_gpio_init();
@@ -38,21 +40,27 @@ int main(void)
 
 	spi_init();
 	oled_init();
-	oled_printf(0, 0, "Shihaiyun is my girl");
+	oled_printf(0, 0, "Shihaiyun");
 
 	spi_flash_read_id(&pid, &vid);
 	printf("spi flash pid = 0x%x, vid = 0x%x\n\r", pid, vid);
-	sprintf(str, "spi flash pid = %x, vid = %x", pid, vid);
-	oled_printf(4, 0, str);
+	sprintf(str1, "pid=%x vid=%x", pid, vid);
+	oled_printf(2, 0, str1);
+
+	spi_flash_init();
+	spi_flash_sector_erase(4096);
+	spi_flash_page_program(4096, "Zhaodonghui", 12);
+	spi_flash_read_data(4096, str2, 12);
+	oled_printf(4, 0, str2);
 
 	//ts_test();
-	i2c_test();
+	//i2c_test();
 	//while (1);
 
 	//nor_main();
 	//nand_main();
 	//lcd_test();
-	/*adc_init();
+	adc_init();
 
 	while (1) {
 		adc = adc_read();
@@ -60,8 +68,10 @@ int main(void)
 
 		m = (unsigned int)voltage;
 		n = (unsigned int)((voltage - m) * 1000);
-		printf("ain0 = %d.%03dv\r", m, n);
-	}*/
+		sprintf(str3, "ain0=%d.%03dv", m, n);
+		oled_printf(6, 0, str3);
+	}
+	
 	return 0;
 }
 

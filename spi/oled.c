@@ -1,5 +1,5 @@
 #include "oled.h"
-#include "gpio_spi.h"
+#include "s3c2440_spi.h"
 #include "../s3c2440_soc.h"
 #include "oled_font.h"
 
@@ -77,7 +77,7 @@ static void oled_putchar(unsigned int page, unsigned int col, unsigned char chr)
 	return ;
 }
 
-static void oled_clear(void)
+void oled_clear_all(void)
 {
 	unsigned int page;
 	unsigned int col;
@@ -87,6 +87,18 @@ static void oled_clear(void)
 		for (col = 0; col < 128; col++) {
 			oled_write_data(0);
 		}
+	}
+
+	return ;
+}
+
+void oled_clear_page(unsigned char page)
+{
+	unsigned int col;
+
+	oled_set_postion(page, 0);
+	for (col = 0; col < 128; col++) {
+		oled_write_data(0);
 	}
 
 	return ;
@@ -120,7 +132,7 @@ void oled_init(void)
 	oled_write_command(0x14);
 
 	oled_set_addr_mode();
-	oled_clear();
+	oled_clear_all();
 
 	oled_write_command(0xAF); /*display ON*/
 }
