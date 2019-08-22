@@ -1,6 +1,7 @@
 #include "key.h"
 #include "s3c2440_soc.h"
 #include "exception.h"
+#include "my_printf.h"
 
 void key_handle(unsigned int eint)
 {
@@ -33,6 +34,15 @@ void key_handle(unsigned int eint)
 				GPFDAT &= ~((1 << 4) | (1 << 5) | (1 << 6));
 			else
 				GPFDAT |= (1 << 4) | (1 << 5) | (1 << 6);
+		} else if (eintpend & (1 << 15)) {
+			/* s5 */
+			if ((GPGDAT & (1 << 7)) == 0) {
+				printf("\n\r");
+				printf("light\n\r");
+			} else {
+				printf("\n\r");
+				printf("dark\n\r");
+			}
 		}
 	}
 
@@ -66,5 +76,3 @@ void key_gpio_init(void)
 }
 
 
-
-	

@@ -25,10 +25,12 @@ objs += spi/spi_flash.o
 objs += spi/vsprintf.o
 objs += spi/div64.o
 
+objs += sensor/optical_resister.o
+
 all: $(objs)
-	arm-linux-ld -T linker.lds $^ libgcc.a -o spi.elf
-	arm-linux-objcopy -O binary -S spi.elf spi.bin
-	arm-linux-objdump -D spi.elf > spi.dis
+	arm-linux-ld -T linker.lds $^ libgcc.a -o sensor.elf
+	arm-linux-objcopy -O binary -S sensor.elf sensor.bin
+	arm-linux-objdump -D sensor.elf > sensor.dis
 
 clean:
 	rm *.bin *.o *.elf *.dis lcd/*.o ts/*.o i2c/*.o spi/*.o

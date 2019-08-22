@@ -22,13 +22,13 @@ int main(void)
 {
 	unsigned int adc;
 	double voltage;
-	unsigned int m;
-	unsigned int n;
+	unsigned int m0, m1;
+	unsigned int n0, n1;
 	unsigned char pid;
 	unsigned char vid;
-	char str1[100];
-	char str2[100];
-	char str3[100];
+	//char str1[100];
+	//char str2[100];
+	//char str3[100];
 
 	leds_init();
 	key_gpio_init();
@@ -37,7 +37,7 @@ int main(void)
 	puts("\n\r");
 	put_hex(g_a);
 	puts("\n\r");
-
+/*
 	spi_init();
 	oled_init();
 	oled_printf(0, 0, "Shihaiyun");
@@ -52,7 +52,7 @@ int main(void)
 	spi_flash_page_program(4096, "Zhaodonghui", 12);
 	spi_flash_read_data(4096, str2, 12);
 	oled_printf(4, 0, str2);
-
+*/
 	//ts_test();
 	//i2c_test();
 	//while (1);
@@ -60,16 +60,22 @@ int main(void)
 	//nor_main();
 	//nand_main();
 	//lcd_test();
-	adc_init();
+	optical_resister_init();
 
 	while (1) {
-		adc = adc_read();
+		adc = adc_read(0);
 		voltage = ((double)adc / 0x3ff) * 3.300;
+		m0 = (unsigned int)voltage;
+		n0 = (unsigned int)((voltage - m0) * 1000);
 
-		m = (unsigned int)voltage;
-		n = (unsigned int)((voltage - m) * 1000);
-		sprintf(str3, "ain0=%d.%03dv", m, n);
-		oled_printf(6, 0, str3);
+		adc = adc_read(1);
+		voltage = ((double)adc / 0x3ff) * 3.300;
+		m1 = (unsigned int)voltage;
+		n1 = (unsigned int)((voltage - m1) * 1000);
+
+		printf("ain0=%d.%03dv   ain1=%d.%03dv\r", m0, n0, m1, n1);
+		//sprintf(str3, "ain0=%d.%03dv", m, n);
+		//oled_printf(6, 0, str3);
 	}
 	
 	return 0;

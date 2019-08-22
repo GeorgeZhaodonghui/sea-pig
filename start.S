@@ -96,7 +96,7 @@ reset:
         ldr             r0,     =0x4c000004
         ldr             r1,     =(92<<12) | (1<<4) | (1<<0)
         str             r1,     [r0]
-
+        
 	/* chose boot from nand or nor */
 	mov		r0,	#0
 	ldr		r1,	[r0]
