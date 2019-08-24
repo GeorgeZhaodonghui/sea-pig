@@ -11,6 +11,7 @@
 #include "ts/ts_test.h"
 #include "spi/gpio_spi.h"
 #include "spi/oled.h"
+#include "sensor/delay.h"
 
 char	g_char = 'A';
 char g_char2 = 'a';
@@ -60,7 +61,7 @@ int main(void)
 	//nor_main();
 	//nand_main();
 	//lcd_test();
-	optical_resister_init();
+/*	optical_resister_init();
 
 	while (1) {
 		adc = adc_read(0);
@@ -77,7 +78,16 @@ int main(void)
 		//sprintf(str3, "ain0=%d.%03dv", m, n);
 		//oled_printf(6, 0, str3);
 	}
-	
+*/
+	unsigned char temperature;
+	unsigned char humidity;
+
+	timer_init();
+	while (1) {
+		if (dht11_recv(&temperature, &humidity) == 0)
+			printf("temperature = %d, humidity = %d\n\r", temperature, humidity);
+	}
+
 	return 0;
 }
 

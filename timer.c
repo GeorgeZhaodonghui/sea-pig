@@ -46,17 +46,17 @@ static void timer_handle(unsigned int unused)
 /* 10ms */
 void timer_init(void)
 {
-	/* timer configuration register0: {prescaler} = 24  */
+	/* timer configuration register0: {prescaler} = 24 5 */
 	TCFG0	&= ~(0xff);
-	TCFG0	|= 0x18;
-	/* timer configuration register1: {divider} = 16 */
+	TCFG0	|= 0x4;
+	/* timer configuration register1: {divider} = 16 2 */
 	TCFG1	&= ~(0xf);
-	TCFG1	|= 0x3;
+	TCFG1	|= 0x0;
 	/* timer0 count buffer register & compare buffer register */
 	TCNTB0	&= ~(0xffff);
-	TCNTB0	|= 0x04e2;
+	TCNTB0	|= 0xea60;
 	TCMPB0	&= ~(0xffff);
-	TCMPB0	|= 0x0271;
+	TCMPB0	|= 0x7530;
 	/* timer control register: timer0 */
 	TCON	|= (1 << 1);
 	TCON	&= ~(1 << 1);

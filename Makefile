@@ -26,6 +26,8 @@ objs += spi/vsprintf.o
 objs += spi/div64.o
 
 objs += sensor/optical_resister.o
+objs += sensor/delay.o
+objs += sensor/temperature_humidity.o
 
 all: $(objs)
 	arm-linux-ld -T linker.lds $^ libgcc.a -o sensor.elf

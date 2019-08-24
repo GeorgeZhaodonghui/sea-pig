@@ -96,6 +96,9 @@ reset:
         ldr             r0,     =0x4c000004
         ldr             r1,     =(92<<12) | (1<<4) | (1<<0)
         str             r1,     [r0]
+
+	/* enable icache */
+	bl		enable_icache
         
 	/* chose boot from nand or nor */
 	mov		r0,	#0
@@ -138,5 +141,11 @@ und_exception:
 
 halt:
 	b	halt
+
+enable_icache:
+	mrc		p15,	0,	r0,	c1,	c0,	0
+	orr		r0,		r0,	#(1<<12)
+	mcr		p15,	0,	r0,	c1,	c0,	0
+	mov		pc,		lr
 
 
