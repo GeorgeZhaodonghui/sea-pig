@@ -28,6 +28,7 @@ objs += spi/div64.o
 objs += sensor/optical_resister.o
 objs += sensor/delay.o
 objs += sensor/temperature_humidity.o
+objs += sensor/ds18b20.o
 
 all: $(objs)
 	arm-linux-ld -T linker.lds $^ libgcc.a -o sensor.elf
@@ -35,7 +36,7 @@ all: $(objs)
 	arm-linux-objdump -D sensor.elf > sensor.dis
 
 clean:
-	rm *.bin *.o *.elf *.dis lcd/*.o ts/*.o i2c/*.o spi/*.o
+	rm *.bin *.o *.elf *.dis lcd/*.o ts/*.o i2c/*.o spi/*.o sensor/*.o
 
 .PHONY:	clean
 

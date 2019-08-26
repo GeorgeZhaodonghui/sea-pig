@@ -79,6 +79,7 @@ int main(void)
 		//oled_printf(6, 0, str3);
 	}
 */
+/*
 	unsigned char temperature;
 	unsigned char humidity;
 
@@ -86,6 +87,19 @@ int main(void)
 	while (1) {
 		if (dht11_recv(&temperature, &humidity) == 0)
 			printf("temperature = %d, humidity = %d\n\r", temperature, humidity);
+	}
+*/
+	unsigned char rom[8];
+	unsigned char i;
+	double temperature;
+
+	timer_init();
+	while (1) {
+		ds18b20_read_temperature(&temperature);
+		m0 = (unsigned int)temperature;
+		n0 = (unsigned int)((temperature - m0) * 10000);
+		printf("temperature = %d.%04d\n\r", m0, n0);
+		mdelay(1000);
 	}
 
 	return 0;
